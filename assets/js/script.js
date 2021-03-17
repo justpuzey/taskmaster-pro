@@ -97,17 +97,21 @@ $(".list-group").on("click", "p", function () {
   textInput.trigger("focus");
 });
 
+// editable field was un-focused
 $(".list-group").on("blur", "textarea", function () {
+  // get current value of textarea
+  var text = $(this).val();
 
-  //get the testarea's current value/text
-  var text = $(this).val().trim();
+  // get status type and position in the list
+  var status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
+  var index = $(this)
+    .closest(".list-group-item")
+    .index();
 
-  // get the parent ul's id attribute
-  var status = $(this).closest(".list-group").attr("id").replace("list-", "");
-
-  // get the task's position in the lis
-  var index = $(this).closest(".list-group-item").index();
-
+  // update task in array and re-save to localstorage
   tasks[status][index].text = text;
   saveTasks();
 
@@ -116,7 +120,7 @@ $(".list-group").on("blur", "textarea", function () {
     .addClass("m-1")
     .text(text);
 
-  // replace textarea with p element
+  // replace textarea with new content
   $(this).replaceWith(taskP);
 });
 
@@ -132,14 +136,35 @@ $(".list-group").on("click", "span", function () {
     .attr("type", "text")
     .addClass("form-control")
     .val(date);
-
-  // swap out elements
   $(this).replaceWith(dateInput);
 
-  // automatically focus on new element
+  // automatically bring up the calendar
   dateInput.trigger("focus");
 });
 
+// value of due date was changed
+$(".list-group").on("blur", "input[type='text']", function () {
+  var date = $(this).val();
+
+  // get status type and position in the list
+  var status = $(this)
+    .closest(".list-group")
+    .attr("id")
+    .replace("list-", "");
+  var index = $(this)
+    .closest(".list-group-item")
+    .index();
+
+  // update task in array and re-save to localstorage
+  tasks[status][index].date = date;
+  saveTasks();
+
+  // recreate span and insert in place of input element
+  var taskSpan = $("<span>")
+    .addClass("badge badge-primary badge-pill")
+    .text(date);
+  $(this).replaceWith(taskSpan);
+});
 
 // remove all tasks
 $("#remove-tasks").on("click", function () {
