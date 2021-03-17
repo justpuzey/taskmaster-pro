@@ -82,6 +82,65 @@ $("#task-form-modal .btn-primary").click(function () {
   }
 });
 
+// task text was clicked
+$(".list-group").on("click", "p", function () {
+  // get current text of p element
+  var text = $(this)
+    .text()
+    .trim();
+
+  // replace p element with a new textarea
+  var textInput = $("<textarea>").addClass("form-control").val(text);
+  $(this).replaceWith(textInput);
+
+  // auto focus new element
+  textInput.trigger("focus");
+});
+
+$(".list-group").on("blur", "textarea", function () {
+
+  //get the testarea's current value/text
+  var text = $(this).val().trim();
+
+  // get the parent ul's id attribute
+  var status = $(this).closest(".list-group").attr("id").replace("list-", "");
+
+  // get the task's position in the lis
+  var index = $(this).closest(".list-group-item").index();
+
+  tasks[status][index].text = text;
+  saveTasks();
+
+  // recreate p element
+  var taskP = $("<p>")
+    .addClass("m-1")
+    .text(text);
+
+  // replace textarea with p element
+  $(this).replaceWith(taskP);
+});
+
+// due date was clicked
+$(".list-group").on("click", "span", function () {
+  // get current text
+  var date = $(this)
+    .text()
+    .trim();
+
+  // create new input element
+  var dateInput = $("<input>")
+    .attr("type", "text")
+    .addClass("form-control")
+    .val(date);
+
+  // swap out elements
+  $(this).replaceWith(dateInput);
+
+  // automatically focus on new element
+  dateInput.trigger("focus");
+});
+
+
 // remove all tasks
 $("#remove-tasks").on("click", function () {
   for (var key in tasks) {
